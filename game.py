@@ -3,6 +3,7 @@ import json
 import random
 
 from data import get_videos
+from database import Database
 
 def decide_winner(answers):
     return random.choice(answers)
@@ -12,6 +13,8 @@ class Game:
         self.state = "START"
         self.room = room
         self.N = N
+        self.db = Database()
+        self.game_id = self.db.create_game()
 
     async def run(self):
         # game explanation
@@ -20,6 +23,9 @@ class Game:
         await self.room.set_countdown(15)
         await asyncio.sleep(17)
         
+        for player in self.room.players.values():
+            player.db_id = self.db.create_player(player.name, self.game_id)
+
         for i in range(self.N):
             # play audio
             for player in self.room.players.values():
@@ -40,9 +46,12 @@ class Game:
             await self.room.set_countdown(30)
             await asyncio.sleep(32)
 
-
             # round end
-            answers = [player.answer for player in self.room.players.values()]
+            answers = []
+            for player in self.room.players.values():
+                answers.append(player.answer)
+                self.db.write_answer(player, i) # add score here
+
             print(f"results for {video['id']}")
             print(answers)
             self.room.room_text = f"<h3>Round {i+1}</h3>" + "The answers revealed"
