@@ -1,5 +1,6 @@
 import json
 import asyncio
+import websockets
 
 from player import Player
 from game import Game
