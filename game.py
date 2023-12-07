@@ -95,12 +95,18 @@ class Game:
             # round end
             usernames = []
             answers = []
+            score_obj = {}
             for player in self.room.players.values():
                 usernames.append(player.name)
                 answers.append(player.answer)
 
             for username, score in zip(usernames, self.score_answers(answers)):
+                score_obj[username] = score
                 self.db.write_answer(username, score)
+
+            await self.room.websocket.send(
+                json.dumps({"type": "scores", "scores": score_obj})
+            )
 
             print(f"results for {video['id']}")
             print(answers)
