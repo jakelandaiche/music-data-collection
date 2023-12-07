@@ -11,12 +11,48 @@ def decide_winner(answers):
 
 
 class Game:
+    common_words = [
+        "the",
+        "be",
+        "to",
+        "of",
+        "and",
+        "a",
+        "in",
+        "that",
+        "have",
+        "it",
+        "for",
+        "not",
+        "on",
+        "with",
+        "as",
+        "at",
+    ]
+
     def __init__(self, room, N):
         self.state = "START"
         self.room = room
         self.N = N
         self.db = Database()
         self.game_id = self.db.create_game()
+
+    def score_answers(self, answers: list[str]):
+        scores = []
+        for i in range(len(answers)):
+            score = 0
+            mult = 10
+            answer_l = answers[i].replace(".", "").replace(",", "").split(" ")
+            answer_s = set(answer_l)
+            for word in answer_s:
+                if word not in self.common_words:
+                    if mult < 20:
+                        mult += 1
+                    for j in range(len(answers)):
+                        if j != i:
+                            score += 1 if answers[j].count(word) else 0
+            scores.append(score * mult)
+        return scores
 
     async def run(self):
         # game explanation
@@ -57,10 +93,14 @@ class Game:
             await asyncio.sleep(32)
 
             # round end
+            usernames = []
             answers = []
             for player in self.room.players.values():
+                usernames.append(player.name)
                 answers.append(player.answer)
-                self.db.write_answer(player, i)  # add score here
+
+            for username, score in zip(usernames, self.score_answers(answers)):
+                self.db.write_answer(username, score)
 
             print(f"results for {video['id']}")
             print(answers)
