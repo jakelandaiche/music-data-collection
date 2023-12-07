@@ -1,4 +1,7 @@
 class_labels_indices.csv
 eval_segments.csv
+*.csv
 *.ipynb
 unbalanced_train_segments.csv
+
+__pycache__/
