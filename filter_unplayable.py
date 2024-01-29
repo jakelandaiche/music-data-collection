@@ -4,25 +4,24 @@ import pandas as pd
 from yt_dlp import YoutubeDL
 
 _dataset = pd.read_csv(
-  "eval_segments.csv",
-  sep=", ",
-  on_bad_lines="skip",
-  skiprows=2,
-  quotechar='"',
-  engine="python"
+    "filtered_data.csv",
+    sep=", ",
+    on_bad_lines="skip",
+    quotechar='"',
+    engine="python",
 )
 
 dataset = _dataset[_dataset["positive_labels"].str.match(".*/m/04rlf.*")]
 
-playable = []
-with YoutubeDL({ "quiet": True }) as ydl: 
-  for video_id in dataset['# YTID']:
-    URL = f'https://www.youtube.com/watch?v={video_id}'
-    try:
-      info = ydl.extract_info(video_id, download=False)
-      playable.append(info.get('playable_in_embed'))
-    except:
-      playable.append(False)
-      
-filtered = dataset[playable]
-filtered.to_csv('filtered.csv')
+with YoutubeDL({"quiet": True}) as ydl:
+    for chunk in range(0, len(dataset), 10000):
+        playable = []
+        for video_id in dataset[chunk : chunk + 10000]["# YTID"]:
+            try:
+                info = ydl.extract_info(video_id, download=False)
+                playable.append(info.get("playable_in_embed"))
+            except:
+                playable.append(False)
+        filtered = dataset[chunk : chunk + 10000][playable]
+        filtered.to_csv(f"filtered_{chunk}.csv")
+        print(f"{len(playable)} were playable")
