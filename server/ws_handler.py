@@ -2,17 +2,15 @@ import json
 from asyncio import create_task
 
 from .utils import generate_code
-from .room import ROOMS, Room 
+from .room import ROOMS, Room
 from .subsystem import Subsystem
 
-from .subsystems.base import base 
-from .subsystems.echo import echo 
+from .subsystems.base import base
+from .subsystems.echo import echo
 
 
-SUBSYSTEMS: list[Subsystem] = [ 
-                               echo,
-                               base
-                               ]
+SUBSYSTEMS: list[Subsystem] = [echo, base]
+
 
 async def ws_handler(websocket):
     """
@@ -28,18 +26,16 @@ async def ws_handler(websocket):
 
     if info["type"] == "host":
         print(f"{websocket.remote_address} is host")
-        room = info["room"]
+        room: Room = info["room"]
         await room.bind_host(websocket)
 
     if info["type"] == "player":
         print(f"{websocket.remote_address} is player")
-        room = info["room"]
+        room: Room = info["room"]
         name = info["name"]
         await room.bind_player(websocket, name)
 
     print(f"{websocket.remote_address}: Handler terminated")
-
-
 
 
 async def get_info(websocket):
@@ -77,11 +73,7 @@ async def get_info(websocket):
                 ROOMS[code] = room
 
             # Done
-            return {
-                    "type": "host",
-                    "room": room
-                    }
-
+            return {"type": "host", "room": room}
 
         # Case: Message type is "join"
         # (Player connection)
@@ -104,12 +96,7 @@ async def get_info(websocket):
             else:
                 continue
 
-            return {
-                    "type": "player",
-                    "room": room,
-                    "name": name
-                    }
+            return {"type": "player", "room": room, "name": name}
 
     # Can only reach here if connection was closed
     return None
-

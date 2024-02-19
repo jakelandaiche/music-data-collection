@@ -1,14 +1,19 @@
 import asyncio
 import argparse
+
+import ssl
 from websockets import serve
 
 from server import ws_handler
 
 parser = argparse.ArgumentParser(
-        prog="MusicBox",
-        )
+    prog="MusicBox",
+)
 parser.add_argument("--host", default="localhost")
 parser.add_argument("--port", default=8080)
+
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context.load_cert_chain("")
 
 
 async def main(host, port):
