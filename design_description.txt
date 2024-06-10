@@ -1,0 +1,35 @@
+The final technical design of the game is built around a client/server model, allowing it to be played seamlessly through a standard web browser. 
+  
+Clients are managed by the server and organized into rooms, each corresponding to a group of people physically playing together. 
+  
+There are two distinct types of clients: hosts and players. 
+-        The host client operates on a device visible to all participants. It is responsible for initiating games, playing the music that players will listen to, and displaying essential game information such as the list of players, current round status, player scores, answers, and other relevant details. 
+-        The player client functions on each participant's individual device. Players use their devices to interact with the game, submitting their answers to the server during gameplay. 
+ 
+The server is the core component that manages all game logic, data management, and computation. It collects and updates information on both the host and player clients in real time and calculates the scores. This centralized handling ensures smooth and synchronized gameplay for all participants.  
+ 
+The format of the game is structured as follows: 
+  
+Each player starts with a score of zero. The objective is to achieve the highest score by the end of the game. 
+  
+The game is divided into multiple rounds. In each round, a music clip is played for the players to listen to. After the clip finishes, players submit their descriptions of it. The server then scores these descriptions based on several factors, including: 
+-        The length of the answer 
+-        The number of unique words used 
+-        The semantic similarity to other players' answers 
+  
+At the end of each round, every player's answer and their corresponding score are displayed. This round's score is then added to the player's cumulative score for the entire game. 
+  
+This process is repeated for a predetermined number of rounds. Once all rounds are completed, the game displays everyone's total scores, along with various statistics computed from their answers throughout the game. 
+1.1.                             Detailed Design (Describe in detail how your final prototype works) 
+1.1.1. Client 
+The frontend client is developed using pure HTML5 and JavaScript, facilitating communication with the server through the WebSockets protocol.
+To efficiently handle this communication, we chose to encode messages between the server and the clients using the JSON (JavaScript Object Notation) format. Each JSON message includes a special field that denotes the type of message being sent.
+The design and layout of the client interface were created using CSS (Cascading Style Sheets). On the host device, the interface is divided into two main sections: the left section displays information about the current part of the game or round, while the right section shows all players as a grid of cards. For the player client, there is only one section that dynamically changes to display either informational text or an answer form, depending on the current state of the game.
+Clients update their displays based on the state information sent by the server. In return, clients send data and trigger events to the server to progress through the game's states. For example, during the phase of collecting answers, the server notifies the client of the state change. The client then displays a text box for players to input their answers, which are subsequently submitted to the server. After the server receives all answers, it broadcasts an update to all clients, advancing the game to the next state where players' answers and scores are revealed.
+To handle audio playback on the host device, we utilized the publicly available YouTube player API. The host client embeds a YouTube video player, which is hidden from view but capable of playing the required clips. The server only needs to send the YouTube video ID to the host client to initiate playback.
+1.1.2. Server 
+The backend server for the game was written in Python and organizes incoming WebSocket connections into rooms of up to 8 players. Each room is modeled as a Python class containing logic handling the list of players and the actions required for a round. These actions include receiving all the answers and scoring them, as well as writing data to the SQLite database. Each player is modeled as a collection of attributes: their name, chosen color, score, and other information unique to them.  
+ 
+When a connection is received, a Player instance is created and given a tracking id within the database. When enough players have connected, the game begins and the server proceeds through the steps in a round. A YouTube video id is sent to the host client, then the server awaits the response that the video has concluded. The answer writing phase is begun, and the server awaits the data from each connection. After all answers have been received, the server executes the scoring phase where semantic similarity is used to determine a base points value alongside bonuses for answer length and exact word matches. Each player’s unique statistics such as average word length are recorded to be shown at the game’s conclusion. All answers are then written to the database with tracking for their author and the audio clip they describe. The process that begins with audio selection repeats for each round of the game, which is set to 5 by default.
+1.1.3. Overall system integration
+The game is accessed through the URL drexel-musicbox.com. This DNS entry points to the frontend hosted via GitHub pages. When the client is loaded, a websocket initiation message is automatically sent to backend.drexel-musicbox.com which is set to the IP address of the virtual machine running the Python server. The database can be accessed directly on the virtual machine or copied to another device and read. 
