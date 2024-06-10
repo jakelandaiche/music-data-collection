@@ -1,0 +1,6 @@
+There are a few things needed in order to get this application deployed.
+1. A python environment with needed packages (requirements.txt in the backend folder)
+2. SSL certs for the backend in order to enable wss in the backend/https on the frontend
+3. the sqlite db must exist. create_sqlite.py can make it for you but there is a database stored in the repository.
+4. Run the backend with backend/start_server.py
+5. You can also use something similar to the nginx config provided to host just on one box without github pages
