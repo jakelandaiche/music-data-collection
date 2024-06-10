@@ -1,8 +1,17 @@
 There are a few things needed in order to get this application deployed.
 1. A python environment with needed packages (requirements.txt in the backend folder)
-2. SSL certs for the backend in order to enable wss in the backend/https on the frontend
-3. the sqlite db must exist. create_sqlite.py can make it for you but there is a database stored in the repository.
+we used a small micromamba installation on the droplet so that it did not take up much disk space. 
+2. SSL certs for the backend in order to enable wss in the backend/https on the frontend. https://stackoverflow.com/a/41366949 should have 
+the information you need
+3. the sqlite db must exist. IF YOU DO NOT HAVE musicbox.db, create_sqlite.py can make it for you but there is 
+a database stored in the repository with our collected data. 
 4. Run the backend with backend/start_server.py
-5. You can also use something similar to the nginx config provided to host just on one box without github pages
-6. DNS entry. We paid for the url drexel-musicbox.com and pointed that at a DigitalOcean droplet. The app needs to be somewhere
-on a publicly accessible IP address.
+5. DNS entry. We paid for the url drexel-musicbox.com and pointed that at a DigitalOcean droplet. The app needs to be somewhere
+on a publicly accessible IP address. Porkbun.com works for getting domains, and it allows you to set the DNS entries. 
+For our setup, we used drexel-musicbox.com pointed at the github pages IP addresses, and set up the subdomain 
+backend.drexel-musicbox.com to point at the IP addressof the virtual machine running the backend. GitHub has links in 
+the pages settings to tell you how to do this, and porkbun also has an automatic github button that *might* work to set the 
+IPs initially. If you do not want to use github pages, a better idea may be to use a proxy like nginx, and the beginnings of
+a config file are in the repo. You need to route all traffic to your one IP to the frontend files so 
+they can be served, and the backend ones need to be accessible for the websocket connections since they come from the client 
+machines to the server. 
