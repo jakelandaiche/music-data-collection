@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MusicBox</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/stylesheet.css">
+
+    <script type="module" src="./src/socket.js"></script>
+    <script type="module" src="./src/state.js"></script>
+
+    <script type="module" src="./src/host/model.js"></script>
+    <script type="module" src="./src/host/view.js"></script>
+  </head>
+
+  <body>
+    <div class="twocol">
+      <div class="leftcol">
+        <header>
+          <img src="./img/logo.svg" width="100%"/>
+        </header>
+
+        <main style="display:flex; position: relative;">
+          <div class="box" style="width: 80%;">
+
+            <!-- Connection form -->
+            <div id="div-connect" style="display: none;">
+              <form id="connectform" style="width: 200px;">
+                <label for="ws-host">WebSocket URL</label>
+                <textarea id="connectform-hostinput" name="ws-host">wss://backend.drexel-musicbox.com:8080</textarea>
+                <input type="submit" value="Connect"></input>
+              </form>
+            </div>
+
+            <!-- Lobby -->
+            <div id="div-lobby" style="display: none;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Join using the code</p>
+                <h1 id="lobby-codetext" style="text-align: center; font-size: 8rem; margin: 0;"></h1>
+                <button id="lobby-startbtn" style="width: 100px;">Start Game</button>
+                <select name="dataset" id="lobby-datasetselect">
+                  <option value="musicCaps1.csv">Dataset 1</option>
+                  <option value="musicCaps2.csv">Dataset 2</option>
+                  <option value="manuallySelected.csv">Dataset 3</option>
+                  <option value="filtered1.csv">Dataset 4</option>
+                  <option value="filtered2.csv">Dataset 5</option>
+                  <option value="unfiltered.csv">Dataset 6</option>
+                </select>
+                <div>
+                  <input type="number" id="lobby-nroundsinput" name="nrounds" value="5" min="0" max="10" style="width:40px;"> Rounds
+                </div>
+                <div>
+                  <input type="checkbox" id="lobby-tutorialinput" name="tutorial"> Play tutorial?
+                </div>
+              </div>
+              To start, there must be at least three players, and all players must be ready.
+            </div>
+
+            <!-- Game Start -->
+            <div id="div-gamestart" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Welcome to MusicBox. This game tests how well you can describe music. A short demo round will play.</p>
+                <!-- <button id="gamestart-skipbtn" style="width: 100px;">Skip</button> -->
+              </div>
+            </div>
+
+            <!-- Fake Round Start -->
+            <div id="div-fakeroundstart" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>You will be presented with a short clip of music to listen to</p>
+              </div>
+            </div>
+
+            <!-- Fake Round Collect -->
+            <div id="div-fakeroundcollect" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Then, you'll write what you think the music sounded like. More points the better the description is!</p>
+              </div>
+            </div>
+
+            <!-- Fake Round End -->
+            <div id="div-fakeroundend" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Then we'll see how everyones answers matches up. The more you can read each other's minds, the better.</p>
+                <!--               
+                  <ul>
+                    <li>- Similarity with other players answers </li>
+                    <li>- How meaningful your answer is </li>
+                    <li>- Matching words </li>
+                    <li>- Length </li>
+                  </ul>
+                -->
+                <p>Your score will appear on the bottom of your card, but remember, having a similar answer with someone gives you <i>both</i> a better score!</p>
+              </div>
+            </div>
+
+            <!-- Fake Round End 2 -->
+            <div id="div-fakeroundend2" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>That's all. Your cumulative score is tracked between rounds next to your name. Try to get the highest score!</p>
+              </div>
+            </div>
+
+            <!-- Round Start -->
+            <div id="div-roundstart" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <h2 id="roundstart-roundnumtext"></h2>
+                <p>Listen carefully</p>
+              </div>
+            </div>
+
+            <!-- Round Collect -->
+            <div id="div-roundcollect" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Enter your answers now!</p>
+              </div>
+
+              <div id="roundcollect-playerlist">
+              </div>
+            </div>
+
+            <!-- Round End -->
+            <div id="div-roundend" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Here is how everyone answered, and their current scores</p>
+              </div>
+
+              <div id="roundend-playerlist">
+              </div>
+            </div>
+
+            <!-- Game End -->
+            <div id="div-gameend" style="display: none; width: 100%;">
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+                <p>Thanks for playing!</p>
+                <button id="gameend-restartbtn" style="width: 100px;">Another Game</button>
+              </div>
+
+              <div id="gameend-playerlist">
+              </div>
+            </div>
+
+            <div id="rankdiv">
+            </div>
+
+            <!-- Hidden video player -->
+            <div style="display: none;">
+              <div id="videoplayer"></div>
+              <script src="./src/videoplayer.js"></script>
+            </div>
+
+            <script type="module" src="./src/host/main.js"></script>
+          </div>
+        </main>
+      </div>
+
+      <div class="rightcol">
+        <div id="playerdiv" style="width:100%; height:100%; display:flex; flex-direction: column;">
+          <div id="playerlist" class="playerlist" style="flex-basis: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

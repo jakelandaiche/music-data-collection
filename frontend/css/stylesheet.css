@@ -1,0 +1,148 @@
+:root {
+height:100%;
+  background: linear-gradient(#c7f8fc, #81f3ff);
+  --main-bg-color: #FFF6D2;
+  --body-bg: #C7F8FC;
+  --main-fg-color: #00145A;
+  --secondary-1: #F3A0F2;
+  --secondary-2: #76FEB6;
+  --shadow: #2B334F;
+}
+
+.belanosima-regular {
+  font-family: "Belanosima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.belanosima-semibold {
+  font-family: "Belanosima", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.belanosima-bold {
+  font-family: "Belanosima", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+  line-height: 1.6;
+  font-family: "Belanosima", sans-serif;
+  font-weight: 600;
+  font-size: 18px; 
+
+  color: var(--main-fg-color);
+  margin: 0px;
+  padding: 0px;
+}
+
+header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+#div-players {
+  display: flex;
+}
+
+.twocol {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+
+  width: 90vw;
+  height: 90vh;
+
+  top: 5vh;
+  bottom: 5vh;
+  left: 5vw;
+  right: 5vw;
+
+  display: flex;
+  flex-direction: row;
+
+  gap: 80px;
+}
+
+.leftcol {
+  flex: 0 0 500px;
+}
+
+.rightcol {
+  flex-basis: 100%;
+}
+
+.progressbar {
+  width: 90%;
+  background-color: var(--main-fg-color);
+  border: 10px solid var(--main-fg-color);
+  height: 20px;
+}
+
+.progressbar div {
+  background-color: var(--secondary-2);
+  width: 100%;
+  height: 100%;
+  transition: all 300ms;
+  transform-origin: left center;
+}
+
+.playerlist {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.emptycard {
+    border: 10px solid var(--main-fg-color);
+    transform: translate(-20px, 20px);
+}
+
+.playercard {
+    transition: all 200ms;
+    background-color: var(--main-bg-color);
+    border: 10px solid var(--main-fg-color);
+    box-shadow: -20px 20px var(--main-fg-color);
+}
+.playercard:nth-child(odd):hover {
+    box-shadow: -25px 25px var(--secondary-2);
+}
+.playercard:nth-child(even):hover {
+    box-shadow: -25px 25px var(--secondary-1);
+}
+
+.playercard:hover {
+    border: 10px solid var(--main-fg-color) !important;
+    transform: translate(5px, -5px);
+}
+
+.playerlist ul {
+  font-size: small;
+}
+
+.box {
+    border: 10px solid var(--main-fg-color);
+    background-color: var(--main-bg-color);
+    box-shadow: -20px 20px var(--secondary-1);
+    padding: 10%;
+    transition: all 200ms;
+}
+
+.code {
+
+}

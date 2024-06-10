@@ -1,0 +1,5 @@
+bidict==0.22.1
+pandas==2.0.2
+sentence_transformers==2.3.1
+websockets==11.0.3
+python-dotenv

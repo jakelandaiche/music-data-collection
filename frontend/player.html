@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MusicBox</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/stylesheet.css">
+
+    <script type="module" src="./src/socket.js"></script>
+    <script type="module" src="./src/state.js"></script>
+
+    <script type="module" src="./src/player/model.js"></script>
+    <script type="module" src="./src/player/view.js"></script>
+  </head>
+
+  <body style="
+    margin: auto;
+    padding: 40px;
+    max-width: 800px;
+    ">
+    <header>
+      <img src="./img/logo.svg" width="100%"/>
+    </header>
+    <main>
+
+      <!-- Connection form -->
+      <div id="div-connect" style="display: none;">
+        <form id="connectform" style="width: 200px;">
+          <label for="ws-host">WebSocket URL</label>
+          <textarea name="ws-host">wss://backend.drexel-musicbox.com:8080</textarea>
+          <input type="submit" value="Connect"></input>
+        </form>
+      </div>
+
+      <!-- Join form -->
+      <div id="div-join" style="display: none;">
+        <form id="joinform" style="width: 200px;">
+          <label for="code">Enter room code</label>
+          <textarea id="join-codeinput" name="code" placeholder="Code, e.g BRKJ"></textarea>
+          <label for="name">Enter your name</label>
+          <textarea id="join-nameinput" name="name" placeholder="Name, e.g Sam"></textarea>
+          <input type="submit" value="Join"></input>
+        </form>
+      </div>
+
+      <!-- Lobby -->
+      <div id="div-lobby" style="display: none;">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+          <h2 id="lobby-nametext" style="text-align: center;"></h1>
+          <input type="color" id="lobby-colorinput"/>
+        </div>
+        I am ready <input type="checkbox" id="lobby-readyinput" />
+      </div>
+
+      <!-- Game Start -->
+      <div id="div-gamestart" style="display: none;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+          <p>Pay attention to the instructions on screen</p>
+        </div>
+      </div>
+
+      <!-- Round Start/Collect -->
+      <div id="div-roundstart" style="display: none;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+          <form id="answerform" style="width: 400px;">
+            <textarea id="answerinput" name="answer" placeholder="Answer, e.g "></textarea>
+            <input id="answersubmit" type="submit" value="Submit"></input>
+          </form>
+          <div id="roundcollect-postsubmit" style="display: none;"> 
+            <p>You've submitted your answer!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Round End -->
+      <div id="div-roundend" style="display: none;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+          <p>See how everyone else answered</p>
+        </div>
+      </div>
+
+      <!-- Game End -->
+      <div id="div-gameend" style="display: none;">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+          <p>Thanks for playing!</p>
+        </div>
+      </div>
+
+      <script type="module" src="./src/player/main.js"></script>
+    </main>
+  </body>
+</html>
